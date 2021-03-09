@@ -1,0 +1,36 @@
+.error{
+    color: red;
+ }
+ label{
+    display: inline-block;
+    width:8em;
+ }
+ .indented{
+    margin-left: 2em;
+ }
+ .indented > *:not(:last-child)::after{
+    content: ",";
+ }
+ blockquote{
+    border-left-style: solid;
+    border-left-width: 0.5em;
+    margin-left: 1em;
+    padding-left: 0.5em;
+    background-color: rgb(245, 245, 245);
+ }
+
+ header{
+    animation: anim_name 1s infinite;
+ }
+ @keyframes anim_name {
+    0% {
+       color: #000000;
+    }
+    50% {
+       color: #ff0d00;
+    }
+    100% {
+       color: #000000;
+    }
+ }
+ 
