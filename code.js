@@ -111,25 +111,26 @@ function create(type, content, cl){
 
  function get_error_txt(){
     if(get_select_text('#srcSubpass') == "VK_SUBPASS_EXTERNAL" && get_select_text('#dstSubpass') == "VK_SUBPASS_EXTERNAL"){
-       return "<code>srcSubpass</code> and <code>dstSubpass</code> must not both be equal to <code>VK_SUBPASS_EXTERNAL</code>.";
+       return ["<code>srcSubpass</code> and <code>dstSubpass</code> must not both be equal to <code>VK_SUBPASS_EXTERNAL</code>."];
     }
 
     // srcSubpass must be less than or equal to dstSubpass
     if(get_select_text('#srcSubpass') !== "VK_SUBPASS_EXTERNAL" && get_select_text('#srcSubpass') !== "VK_SUBPASS_EXTERNAL")
     {
        if(get_int(get_select_text('#srcSubpass')) > get_int(get_select_text('#dstSubpass'))){
-          return "<code>srcSubpass</code> must be less than or equal to <code>dstSubpass</code>, unless one of them is <code>VK_SUBPASS_EXTERNAL</code>, to avoid cyclic dependencies and ensure a valid execution order";
+          return ["<code>srcSubpass</code> must be less than or equal to <code>dstSubpass</code>, unless one of them is <code>VK_SUBPASS_EXTERNAL</code>, to avoid cyclic dependencies and ensure a valid execution order"];
        }
     }
 
     // Table 4 fulfilled?
-    // let full_first_scope = get_select_text('#srcStageMask') == "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT";
-    // let full_second_scope = get_select_text('#dstStageMask') == "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT";
+    let table_intro = create("p", "May this table version of table 4 help you:")
+    let table_img = create("img", "");
+    table_img.src = "table_4.png";
     if(!is_access_supported_by_stage(get_select_text('#srcAccessMask'), get_select_text('#srcStageMask'))){
-       return "Any access flag included in <code>srcAccessMask</code> must be supported by one of the pipeline stages in <code>srcStageMask</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>";
+       return ["Any access flag included in <code>srcAccessMask</code> must be supported by one of the pipeline stages in <code>srcStageMask</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>", table_intro, table_img];
     }
     if(!is_access_supported_by_stage(get_select_text('#dstAccessMask'), get_select_text('#dstStageMask'))){
-       return "Any access flag included in <code>dstAccessMask</code> must be supported by one of the pipeline stages in <code>dstStageMask</code>, as specified in the <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>";
+       return ["Any access flag included in <code>dstAccessMask</code> must be supported by one of the pipeline stages in <code>dstStageMask</code>, as specified in the <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>", table_intro, table_img];
     }
 
     // Memory access with TOP/BOTTOM
@@ -137,11 +138,11 @@ function create(type, content, cl){
        let wrong_for_src = get_select_text('#srcAccessMask') !== "0" && is_stage_mask_pipe_end("#srcStageMask");
        let wrong_for_dst = get_select_text('#dstAccessMask') !== "0" && is_stage_mask_pipe_end("#dstStageMask");
        if(wrong_for_src || wrong_for_dst){
-          return "Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask. That is legal, but probably a mistake since those stages don't perform memory access.";
+          return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask. That is legal, but probably a mistake since those stages don't perform memory access."];
        }
     }
 
-    return undefined;
+    return [];
  }
 
 
@@ -160,9 +161,16 @@ function create(type, content, cl){
     result_el.innerHTML = '';
     
     var error_txt = get_error_txt();
-    if(typeof error_txt != "undefined"){
-       let error_el = create("p", error_txt, "error");
+    if(error_txt.length > 0){
+       let error_el = create("p", error_txt[0], "error");
        result_el.appendChild(error_el);
+        
+       if(error_txt.length > 1){
+           for (let i = 1; i < error_txt.length; i++) {
+            result_el.appendChild(error_txt[i]);
+           }
+       }
+
        return;
     }
 
@@ -247,4 +255,3 @@ function create(type, content, cl){
     document.querySelector('#dstAccessMask').addEventListener("change", f0);
     f0();
  });
- 
