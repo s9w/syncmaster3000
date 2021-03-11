@@ -304,33 +304,43 @@ function does_table_do_memory_acc_w_pipe_ends(table_id){
 
 
 function get_error_txt(){
-   if(get_select_text('#srcSubpass') == "VK_SUBPASS_EXTERNAL" && get_select_text('#dstSubpass') == "VK_SUBPASS_EXTERNAL"){
+   let external_src_subpass = get_select_text('#srcSubpass') == "VK_SUBPASS_EXTERNAL";
+   let external_dst_subpass = get_select_text('#dstSubpass') == "VK_SUBPASS_EXTERNAL";
+   if(external_src_subpass && external_dst_subpass){
       return ["<code>srcSubpass</code> and <code>dstSubpass</code> must not both be equal to <code>VK_SUBPASS_EXTERNAL</code>."];
    }
    
    // srcSubpass must be less than or equal to dstSubpass
-   if(get_select_text('#srcSubpass') !== "VK_SUBPASS_EXTERNAL" && get_select_text('#srcSubpass') !== "VK_SUBPASS_EXTERNAL")
-   {
+   if(!external_src_subpass && !external_dst_subpass){
       if(get_int(get_select_text('#srcSubpass')) > get_int(get_select_text('#dstSubpass'))){
          return ["<code>srcSubpass</code> must be less than or equal to <code>dstSubpass</code>, unless one of them is <code>VK_SUBPASS_EXTERNAL</code>, to avoid cyclic dependencies and ensure a valid execution order"];
       }
    }
    
-   // Is table 4 fulfilled? Spec:
-   // "Any access flag included in src/dstAccessMask must be supported by one of the pipeline stages in src/dstStageMask, as specified in the table of supported access types"
-   if(!is_table_valid("#src_scope")){
-      return ["Any access flag included in <code>srcAccessMask</code> must be supported by one of the pipeline stages in <code>srcStageMask</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>"];
-   }
-   if(!is_table_valid("#dst_scope")){
-      return ["Any access flag included in <code>dstAccessMask</code> must be supported by one of the pipeline stages in <code>srcStageMask</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>"];
+   // Is table 4 fulfilled?
+   {
+      const make_error = function(stageMask){
+         return [`Any access flag included in <code>srcAccessMask</code> must be supported by one of the pipeline stages in <code>${stageMask}</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>`];
+      }
+      if(!is_table_valid("#src_scope")){
+         return make_error("srcStageMask");
+      }
+      if(!is_table_valid("#dst_scope")){
+         return make_error("dstStageMask");
+      }
    }
    
    // Memory access with pipe end
-   if(does_table_do_memory_acc_w_pipe_ends("#src_scope")){
-      return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask in the source scope. That is legal, but probably a mistake since those stages don't perform memory access."];
-   }
-   if(does_table_do_memory_acc_w_pipe_ends("#dst_scope")){
-      return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask in the destination scope. That is legal, but probably a mistake since those stages don't perform memory access."];
+   {
+      const make_error = function(problem_scope){
+         return [`Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask in the ${problem_scope} scope. That is legal, but probably a mistake since those stages don't perform memory access.`];
+      }
+      if(does_table_do_memory_acc_w_pipe_ends("#src_scope")){
+         return make_error("source");
+      }
+      if(does_table_do_memory_acc_w_pipe_ends("#dst_scope")){
+         return make_error("destination");
+      }
    }
    
    return [];

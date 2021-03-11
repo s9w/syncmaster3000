@@ -50,6 +50,7 @@ blockquote{
 }
 .member_name{
    width: 13em;
+   white-space: pre;
 }
 
 /* This is some css voodoo I don't understand but it apparently is necessary to select the label. label:checked alone doesn't work */

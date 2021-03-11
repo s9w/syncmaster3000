@@ -10,7 +10,7 @@
 </head>
 <body>
    <header id="title-block-header">
-      <code><a href="https://github.com/s9w/syncmaster3000">Github repo</a></code>
+      <code><a class="link_underlining" href="https://github.com/s9w/syncmaster3000">Github repo</a></code>
       <pre>
          _____                                      _              ____   ___   ___   ___  
         / ____|                                    | |            |___ \ / _ \ / _ \ / _ \ 
@@ -23,9 +23,9 @@
       </header>
       
       <div id="tab_bar">
-         <span data-tabid="#tab_main" class="button active_button" onclick="section_button_clicked(this)">main</span>
-         <span data-tabid="#tab_src" class="button" onclick="section_button_clicked(this)">Source scope</span>
-         <span data-tabid="#tab_dst" class="button" onclick="section_button_clicked(this)">Destination scope</span>
+         <span data-tabid="#tab_main" class="link_underlining button active_button" onclick="section_button_clicked(this)">main</span>
+         <span data-tabid="#tab_src" class="link_underlining button" onclick="section_button_clicked(this)">Source scope</span>
+         <span data-tabid="#tab_dst" class="link_underlining button" onclick="section_button_clicked(this)">Destination scope</span>
       </div> 
       
       <section id="tab_main">
@@ -33,7 +33,7 @@
             <div class="indented">
                
                <div class="member">
-                  <div class="member_name">.srcSubpass =</div>
+                  <div class="member_name">.srcSubpass    =</div>
                   <select id="srcSubpass">
                      <option selected>VK_SUBPASS_EXTERNAL</option>
                      <option>0</option>
@@ -43,7 +43,7 @@
                </div>
                
                <div class="member">
-                  <div class="member_name">.dstSubpass =</div>
+                  <div class="member_name">.dstSubpass    =</div>
                   <select id="dstSubpass">
                      <option>VK_SUBPASS_EXTERNAL</option>
                      <option selected>0</option>
@@ -53,12 +53,12 @@
                </div>
                
                <div class="member">
-                  <div class="member_name">.srcStageMask =</div>
+                  <div class="member_name">.srcStageMask  =</div>
                   <div id="srcStageMask"></div>
                </div>
                
                <div class="member">
-                  <div class="member_name">.dstStageMask =</div>
+                  <div class="member_name">.dstStageMask  =</div>
                   <div id="dstStageMask"></div>
                </div>
                
