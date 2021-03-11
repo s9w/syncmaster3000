@@ -327,7 +327,10 @@ function get_error_txt(){
    
    // Memory access with pipe end
    if(does_table_do_memory_acc_w_pipe_ends("#src_scope")){
-      return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask. That is legal, but probably a mistake since those stages don't perform memory access."];
+      return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask in the source scope. That is legal, but probably a mistake since those stages don't perform memory access."];
+   }
+   if(does_table_do_memory_acc_w_pipe_ends("#dst_scope")){
+      return ["Defining a memory access != 0 with a TOP/BOTTOM_OF_PIPE stage mask in the destination scope. That is legal, but probably a mistake since those stages don't perform memory access."];
    }
    
    return [];
