@@ -1,36 +1,95 @@
 .error{
-    color: red;
- }
- label{
-    display: inline-block;
-    width:8em;
- }
- .indented{
-    margin-left: 2em;
- }
- .indented > *:not(:last-child)::after{
-    content: ",";
- }
- blockquote{
-    border-left-style: solid;
-    border-left-width: 0.5em;
-    margin-left: 1em;
-    padding-left: 0.5em;
-    background-color: rgb(245, 245, 245);
- }
+   color: red;
+}
+.indented{
+   margin-left: 2em;
+}
+blockquote{
+   border-left-style: solid;
+   border-left-width: 0.5em;
+   margin-left: 1em;
+   padding-left: 0.5em;
+   background-color: rgb(245, 245, 245);
+}
 
- header{
-    animation: anim_name 1s infinite;
- }
- @keyframes anim_name {
-    0% {
-       color: #000000;
-    }
-    50% {
-       color: #ff0d00;
-    }
-    100% {
-       color: #000000;
-    }
- }
- 
+.invisible{
+   display: none;
+}
+#tab_bar{
+   background-color: lightyellow;
+   padding: 0.5em;
+}
+.button{
+   font-family: monospace;
+   cursor: pointer;
+   text-decoration-style: dashed;
+   text-decoration-line: underline;
+   margin: 1em;
+}
+.button:hover{
+   text-decoration-style: solid;
+   background-color: hsl(120, 73%, 95%);
+}
+.active_button{
+   background-color: lightgreen !important;
+}
+
+#tab_main{
+   font-family: monospace;
+}
+.member{
+   display: flex;
+   margin-top: 1em;
+}
+.member_name{
+   width: 13em;
+}
+
+/* This is some css voodoo I don't understand but it apparently is necessary to select the label. label:checked alone doesn't work */
+input[type=checkbox]:checked + label{
+   background-color: lightgreen;
+}
+
+/* table things */
+/* thread > tr >th{
+   background-color: red;
+   transform: rotate(-90deg);
+   transform-origin: left;
+} */
+table>tbody>*:first-child{
+   /* background-color: red; */
+   writing-mode: sideways-lr;
+   vertical-align: bottom;
+}
+.col_header{
+   width: 1.5em;
+   font-family: "Bahnschrift";
+}
+.col_header>*{
+   vertical-align: middle;
+}
+.row_header{
+   text-align: left;
+   font-family: "Bahnschrift";
+}
+th{
+   font-weight: normal;
+}
+td{
+   background-color: hsl(0, 100%, 96%);;
+}
+td.green{
+   background-color: hsl(111, 100%, 96%);;
+}
+
+
+/* Logo animation */
+header{
+   animation: anim_name 1s infinite;
+}
+@keyframes anim_name {
+   0% { color: #000000; }
+   50% { color: #000000; }
+   51% { color: #ff0000; }
+   100% { color: #ff0000; }
+}

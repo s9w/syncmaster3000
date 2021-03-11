@@ -12,179 +12,75 @@
    <header id="title-block-header">
       <code><a href="https://github.com/s9w/syncmaster3000">Github repo</a></code>
       <pre>
-          _____                                      _              ____   ___   ___   ___  
-         / ____|                                    | |            |___ \ / _ \ / _ \ / _ \ 
-        | (___  _   _ _ __   ___ _ __ ___   __ _ ___| |_ ___ _ __    __) | | | | | | | | | |
-         \___ \| | | | '_ \ / __| '_ ` _ \ / _` / __| __/ _ \ '__|  |__ <| | | | | | | | | |
-         ____) | |_| | | | | (__| | | | | | (_| \__ \ ||  __/ |     ___) | |_| | |_| | |_| |
-        |_____/ \__, |_| |_|\___|_| |_| |_|\__,_|___/\__\___|_|    |____/ \___/ \___/ \___/ 
-                 __/ |                                                                      
-                |___/                                                                                                                                           
-      </pre>
-   </header>
-   
-   <p><code>constexpr VkSubpassDependency my_first_dependency{</code></p>
-   <div class="indented">
-
-   <p>
-      <label for="srcSubpass"><code>.srcSubpass</code></label>
-      <select id="srcSubpass">
-         <option selected>VK_SUBPASS_EXTERNAL</option>
-         <option>0</option>
-         <option>1</option>
-         <option>2</option>
-      </select>
-   </p>
-   
-   <p>
-      <label for="dstSubpass"><code>.dstSubpass</code></label>
-      <select id="dstSubpass">
-         <option>VK_SUBPASS_EXTERNAL</option>
-         <option selected>0</option>
-         <option>1</option>
-         <option>2</option>
-      </select>
-   </p>
-
-   <p>
-      <label for="srcStageMask"><code>.srcStageMask</code></label>
-      <select id="srcStageMask">
-         <option selected>VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</option>
-         <option>VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</option>
-         <option>VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT</option>
-         <option>VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</option>
-         <option>VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT</option>
-         <option>VK_PIPELINE_STAGE_VERTEX_INPUT_BIT</option>
-         <option>VK_PIPELINE_STAGE_VERTEX_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</option>
-         <option>VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT</option>
-         <option>VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</option>
-         <option>VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TRANSFER_BIT</option>
-         <option>VK_PIPELINE_STAGE_HOST_BIT</option>
-         <option>VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR</option>
-         <option>VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR</option>
-         <option>VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR</option>
-      </select>
-   </p>
-
-   <p>
-      <label for="dstStageMask"><code>.dstStageMask</code></label>
-      <select id="dstStageMask">
-         <option>VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT</option>
-         <option>VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT</option>
-         <option selected>VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT</option>
-         <option>VK_PIPELINE_STAGE_ALL_COMMANDS_BIT</option>
-         <option>VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT</option>
-         <option>VK_PIPELINE_STAGE_VERTEX_INPUT_BIT</option>
-         <option>VK_PIPELINE_STAGE_VERTEX_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT</option>
-         <option>VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT</option>
-         <option>VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</option>
-         <option>VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT</option>
-         <option>VK_PIPELINE_STAGE_TRANSFER_BIT</option>
-         <option>VK_PIPELINE_STAGE_HOST_BIT</option>
-         <option>VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR</option>
-         <option>VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR</option>
-         <option>VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT</option>
-         <option>VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV</option>
-         <option>VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR</option>
-      </select>
-   </p>
-
-   <p>
-      <label for="srcAccessMask"><code>.srcAccessMask</code></label>
-      <select id="srcAccessMask">
-         <option selected>0</option>
-         <option>VK_ACCESS_INDIRECT_COMMAND_READ_BIT</option>
-         <option>VK_ACCESS_INDEX_READ_BIT</option>
-         <option>VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT</option>
-         <option>VK_ACCESS_UNIFORM_READ_BIT</option>
-         <option>VK_ACCESS_SHADER_READ_BIT</option>
-         <option>VK_ACCESS_SHADER_WRITE_BIT</option>
-         <option>VK_ACCESS_INPUT_ATTACHMENT_READ_BIT</option>
-         <option>VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</option>
-         <option>VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</option>
-         <option>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</option>
-         <option>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</option>
-         <option>VK_ACCESS_TRANSFER_READ_BIT</option>
-         <option>VK_ACCESS_TRANSFER_WRITE_BIT</option>
-         <option>VK_ACCESS_HOST_READ_BIT</option>
-         <option>VK_ACCESS_HOST_WRITE_BIT</option>
-         <option>VK_ACCESS_MEMORY_READ_BIT</option>
-         <option>VK_ACCESS_MEMORY_WRITE_BIT</option>
-         <option>VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT</option>
-         <option>VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV</option>
-         <option>VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV</option>
-         <option>VK_ACCESS_CONDITIONAL_RENDERING_READ_BIT_EXT</option>
-         <option>VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT</option>
-         <option>VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR</option>
-         <option>VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR</option>
-         <option>VK_ACCESS_FRAGMENT_DENSITY_MAP_READ_BIT_EXT</option>
-      </select>
-   </p>
-
-   <p>
-      <label for="dstAccessMask"><code>.dstAccessMask</code></label>
-      <select id="dstAccessMask">
-         <option>0</option>
-         <option>VK_ACCESS_INDIRECT_COMMAND_READ_BIT</option>
-         <option>VK_ACCESS_INDEX_READ_BIT</option>
-         <option>VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT</option>
-         <option>VK_ACCESS_UNIFORM_READ_BIT</option>
-         <option>VK_ACCESS_SHADER_READ_BIT</option>
-         <option>VK_ACCESS_SHADER_WRITE_BIT</option>
-         <option>VK_ACCESS_INPUT_ATTACHMENT_READ_BIT</option>
-         <option selected>VK_ACCESS_COLOR_ATTACHMENT_READ_BIT</option>
-         <option>VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</option>
-         <option>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</option>
-         <option>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</option>
-         <option>VK_ACCESS_TRANSFER_READ_BIT</option>
-         <option>VK_ACCESS_TRANSFER_WRITE_BIT</option>
-         <option>VK_ACCESS_HOST_READ_BIT</option>
-         <option>VK_ACCESS_HOST_WRITE_BIT</option>
-         <option>VK_ACCESS_MEMORY_READ_BIT</option>
-         <option>VK_ACCESS_MEMORY_WRITE_BIT</option>
-         <option>VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT</option>
-         <option>VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV</option>
-         <option>VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV</option>
-         <option>VK_ACCESS_CONDITIONAL_RENDERING_READ_BIT_EXT</option>
-         <option>VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT</option>
-         <option>VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT</option>
-         <option>VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR</option>
-         <option>VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR</option>
-         <option>VK_ACCESS_FRAGMENT_DENSITY_MAP_READ_BIT_EXT</option>
-      </select>
-   </p>
-
-   </div>
-   <p><code>};</code></p>
-
-   <p id="result">
-
-   </p>
-   
-</body>
+         _____                                      _              ____   ___   ___   ___  
+        / ____|                                    | |            |___ \ / _ \ / _ \ / _ \ 
+       | (___  _   _ _ __   ___ _ __ ___   __ _ ___| |_ ___ _ __    __) | | | | | | | | | |
+        \___ \| | | | '_ \ / __| '_ ` _ \ / _` / __| __/ _ \ '__|  |__ <| | | | | | | | | |
+        ____) | |_| | | | | (__| | | | | | (_| \__ \ ||  __/ |     ___) | |_| | |_| | |_| |
+       |_____/ \__, |_| |_|\___|_| |_| |_|\__,_|___/\__\___|_|    |____/ \___/ \___/ \___/ 
+                __/ |                                                                      
+               |___/</pre>
+      </header>
+      
+      <div id="tab_bar">
+         <span data-tabid="#tab_main" class="button active_button" onclick="section_button_clicked(this)">main</span>
+         <span data-tabid="#tab_src" class="button" onclick="section_button_clicked(this)">Source scope</span>
+         <span data-tabid="#tab_dst" class="button" onclick="section_button_clicked(this)">Destination scope</span>
+      </div> 
+      
+      <section id="tab_main">
+         <p><code>constexpr VkSubpassDependency my_first_dependency{</code></p>
+            <div class="indented">
+               
+               <div class="member">
+                  <div class="member_name">.srcSubpass =</div>
+                  <select id="srcSubpass">
+                     <option selected>VK_SUBPASS_EXTERNAL</option>
+                     <option>0</option>
+                     <option>1</option>
+                     <option>2</option>
+                  </select>
+               </div>
+               
+               <div class="member">
+                  <div class="member_name">.dstSubpass =</div>
+                  <select id="dstSubpass">
+                     <option>VK_SUBPASS_EXTERNAL</option>
+                     <option selected>0</option>
+                     <option>1</option>
+                     <option>2</option>
+                  </select>
+               </div>
+               
+               <div class="member">
+                  <div class="member_name">.srcStageMask =</div>
+                  <div id="srcStageMask"></div>
+               </div>
+               
+               <div class="member">
+                  <div class="member_name">.dstStageMask =</div>
+                  <div id="dstStageMask"></div>
+               </div>
+               
+               <div class="member">
+                  <div class="member_name">.srcAccessMask =</div>
+                  <div id="srcAccessMask"></div>
+               </div>
+               
+               <div class="member">
+                  <div class="member_name">.dstAccessMask =</div>
+                  <div id="dstAccessMask"></div>
+               </div>
+               
+            </div>
+            <p><code>};</code></p>
+            
+            <p id="result">
+               
+            </p>
+            
+         </section>
+         <section id="tab_src" class="invisible"></section>
+         <section id="tab_dst" class="invisible"></section>
+         
+      </body>
