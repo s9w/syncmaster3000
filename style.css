@@ -19,6 +19,13 @@ blockquote{
    background-color: lightyellow;
    padding: 0.5em;
 }
+.link_underlining{
+   text-decoration-style: dashed;
+   text-decoration-line: underline;
+}
+.link_underlining:hover{
+   text-decoration-style: solid;
+}
 .button{
    font-family: monospace;
    cursor: pointer;
@@ -54,8 +61,8 @@ input[type=checkbox]:checked + label{
 .table{
    display: flex;
    flex-direction: column;
-   margin-top: 20em;
-   font-family: "Bahnschrift";
+   margin-top: 20em; /* reserve some space because the rotation will mess the size calculation up */
+   font-family: "Bahnschrift", monospace;
 }
 .table_row{
    display: flex;

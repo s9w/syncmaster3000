@@ -1,19 +1,19 @@
 let stage_list = ["TOP_OF_PIPE_BIT", "DRAW_INDIRECT_BIT", "VERTEX_INPUT_BIT", "VERTEX_SHADER_BIT", "TESSELLATION_CONTROL_SHADER_BIT", "TESSELLATION_EVALUATION_SHADER_BIT", "GEOMETRY_SHADER_BIT", "FRAGMENT_SHADER_BIT", "EARLY_FRAGMENT_TESTS_BIT", "LATE_FRAGMENT_TESTS_BIT", "COLOR_ATTACHMENT_OUTPUT_BIT", "COMPUTE_SHADER_BIT", "TRANSFER_BIT", "BOTTOM_OF_PIPE_BIT", "HOST_BIT", "ALL_GRAPHICS_BIT", "ALL_COMMANDS_BIT"];
-   
+
 let access_list = ["INDIRECT_COMMAND_READ_BIT", "INDEX_READ_BIT", "VERTEX_ATTRIBUTE_READ_BIT", "UNIFORM_READ_BIT", "INPUT_ATTACHMENT_READ_BIT", "SHADER_READ_BIT", "SHADER_WRITE_BIT", "COLOR_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_WRITE_BIT", "DEPTH_STENCIL_ATTACHMENT_READ_BIT", "DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", "TRANSFER_READ_BIT", "TRANSFER_WRITE_BIT", "HOST_READ_BIT", "HOST_WRITE_BIT", "MEMORY_READ_BIT", "MEMORY_WRITE_BIT"];
 
 
-function create(type, content, cl){
+function create(type, content, class_list = []){
    var el = document.createElement(type);
    el.innerHTML = content;
-   if(typeof cl !== 'undefined')
-   el.classList.add(cl);
+   for(let c of class_list)
+   el.classList.add(c);
    return el;
 }
 
-function get_select_text(id){
-   let el = document.querySelector(id);
-   let text = el.options[el.selectedIndex].text;
+function get_select_text(select_id){
+   let element = document.querySelector(select_id);
+   let text = element.options[element.selectedIndex].text;
    return text;
 }
 
@@ -21,24 +21,31 @@ function get_int(str){
    return parseInt(str, 10);
 }
 
-function section_button_clicked(button_el){
-   // Make all buttons non-active
-   document.querySelector("#tab_bar").childNodes.forEach(button_el => {
-      button_el.className = "button";
-   });
+function delete_class(element, class_name){
+   if (element.classList.contains(class_name)) {
+      element.classList.remove(class_name);
+   }
+}
 
-   // But make the pressed button active
-   button_el.className += " active_button";
+function add_class(element, class_name){
+   if (!element.classList.contains(class_name)) {
+      element.classList.add(class_name);
+   }
+}
+
+function section_button_clicked(tab_button_element){
+   for(let item of document.querySelector("#tab_bar").children){
+      delete_class(item, "active_button");
+   };
+   tab_button_element.className += " active_button";
    
    // Make all sections invisible
-   document.querySelector("#tab_main").className = "invisible";
-   document.querySelector("#tab_src").className = "invisible";
-   document.querySelector("#tab_dst").className = "invisible";
+   for(let section of document.querySelectorAll("section"))
+      add_class(section, "invisible");
    
    // But restore visibility for one
-   let tab_id = button_el.getAttribute("data-tabid");
-   let section_div = document.querySelector(tab_id);
-   section_div.className = "";
+   let tab_id = tab_button_element.getAttribute("data-tabid");
+   document.querySelector(tab_id).className = "";
 }
 
 function build_labeled_checkbox(name, initial_checked){
@@ -57,31 +64,31 @@ function get_ij_stage_and_access(i, j){
 }
 
 function build_table(id_str, default_stages, default_accesses){
-   let table = create("div", "", "table");
+   let table = create("div", "", ["table"]);
    table.id = id_str;
    
-   // Access bits
+   // Access flags
    {
-      let first_row = create("div", "", "table_row")
+      let first_row = create("div", "", ["table_row"])
       first_row.appendChild(create("div", ""));
       access_list.forEach(access => {
-         let access_el = create("div", "", "rot");
+         let access_el = create("div", "", ["rot"]);
          let checked = default_accesses.includes(access);
          let labeled_box = build_labeled_checkbox(access, checked);
          access_el.appendChild(labeled_box[0]);
          access_el.appendChild(labeled_box[1]);
-
+         
          first_row.appendChild(access_el);
       });
-
+      
       table.appendChild(first_row);
    }
-
    
-   // Stage bits
+   
+   // Stage flags
    {
       stage_list.forEach(stage => {
-         let row = create("div", "", "table_row")
+         let row = create("div", "", ["table_row"])
          {
             let stage_el = create("div", "");
             let checked = default_stages.includes(stage);
@@ -91,13 +98,13 @@ function build_table(id_str, default_stages, default_accesses){
             row.appendChild(stage_el);
          }
          access_list.forEach(access => {
-            row.appendChild(create("div", " ", "table_cell"));
+            row.appendChild(create("div", " ", ["table_cell"]));
          });
          
          table.appendChild(row);
       });
    }
-
+   
    // Make the legal ones green
    for (let i_stage = 0; i_stage < stage_list.length; i_stage++) {
       for (let j_access = 0; j_access < access_list.length; j_access++) {
@@ -108,17 +115,15 @@ function build_table(id_str, default_stages, default_accesses){
          }
       }
    }
-   
-   
-   
-   // table.appendChild(tbody);
+
    return table;
 }
 
 function get_table_stage_scope(table){
    stage_scope = [];
    for (let i = 0; i < stage_list.length; i++) {
-      let input_el = table.children[i+1].children[0].children[0];
+      let cell_el = table.children[i+1].children[0];
+      let input_el = cell_el.querySelector("input");
       if(input_el.checked){
          stage_scope.push(input_el.id);
       }
@@ -126,11 +131,13 @@ function get_table_stage_scope(table){
    return stage_scope;
 }
 
+
 function get_table_access_scope(table){
    access_scope = [];
    let row = table.children[0];
    for (let i = 0; i < stage_list.length; i++) {
-      let input_el = row.children[i+1].children[0];
+      let cell_el = row.children[i+1];
+      let input_el = cell_el.querySelector("input");
       if(input_el.checked){
          access_scope.push(input_el.id);
       }
@@ -139,7 +146,7 @@ function get_table_access_scope(table){
 }
 
 
-function get_printable_bitmask(scope_str_array, target_div, prefix){
+function write_pretty_bitmask(scope_str_array, prefix, target_div){
    target_div.innerHTML = "";
    if(scope_str_array.length == 0){
       target_div.appendChild(create("div", "0,"));
@@ -161,17 +168,17 @@ function scope_checkbox_clicked(){
    let source_table = document.querySelector("#src_scope");
    let source_stage_scope = get_table_stage_scope(source_table);
    let source_access_scope = get_table_access_scope(source_table);
-
+   
    let dst_table = document.querySelector("#dst_scope");
    let dst_stage_scope = get_table_stage_scope(dst_table);
    let dst_access_scope = get_table_access_scope(dst_table);
-
-   get_printable_bitmask(source_stage_scope, document.querySelector("#srcStageMask"), "VK_PIPELINE_STAGE_");
-   get_printable_bitmask(source_access_scope, document.querySelector("#srcAccessMask"), "VK_ACCESS_");
-
-   get_printable_bitmask(dst_stage_scope, document.querySelector("#dstStageMask"), "VK_PIPELINE_STAGE_");
-   get_printable_bitmask(dst_access_scope, document.querySelector("#dstAccessMask"), "VK_ACCESS_");
-
+   
+   write_pretty_bitmask(source_stage_scope, "VK_PIPELINE_STAGE_", document.querySelector("#srcStageMask"));
+   write_pretty_bitmask(source_access_scope, "VK_ACCESS_", document.querySelector("#srcAccessMask"));
+   
+   write_pretty_bitmask(dst_stage_scope, "VK_PIPELINE_STAGE_", document.querySelector("#dstStageMask"));
+   write_pretty_bitmask(dst_access_scope, "VK_ACCESS_", document.querySelector("#dstAccessMask"));
+   
    check_and_display_info();
 }
 
@@ -181,18 +188,18 @@ function table4(access, stage){
    if(access=="0"){
       return true;
    }
-
+   
    if(stage=="ALL_COMMANDS_BIT"){
       return true;
    }
-
+   
    // "VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT specifies the execution of all graphics pipeline stages, and is equivalent to the logical OR of:""
    if(stage=="ALL_GRAPHICS_BIT"){
       let equivalent = ["DRAW_INDIRECT_BIT", "TASK_SHADER_BIT_NV", "MESH_SHADER_BIT_NV", "VERTEX_INPUT_BIT", "VERTEX_SHADER_BIT", "TESSELLATION_CONTROL_SHADER_BIT", "TESSELLATION_EVALUATION_SHADER_BIT", "GEOMETRY_SHADER_BIT", "FRAGMENT_SHADER_BIT", "EARLY_FRAGMENT_TESTS_BIT", "LATE_FRAGMENT_TESTS_BIT", "COLOR_ATTACHMENT_OUTPUT_BIT", "CONDITIONAL_RENDERING_BIT_EXT", "TRANSFORM_FEEDBACK_BIT_EXT", "FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", "FRAGMENT_DENSITY_PROCESS_BIT_EXT"];
-
+      
       return equivalent.some((equiv_stage) => table4(access, equiv_stage));
    }
-
+   
    if(access=="INDIRECT_COMMAND_READ_BIT"){
       return ["DRAW_INDIRECT_BIT", "ACCELERATION_STRUCTURE_BUILD_BIT_KHR"].includes(stage);
    }
@@ -268,10 +275,16 @@ function is_table_valid(table_id){
 }
 
 
+function is_stage_mask_pipe_end(stage_mask){
+   return ["TOP_OF_PIPE_BIT", "BOTTOM_OF_PIPE_BIT"].includes(stage_mask);
+}
+
+
 function stage_masks_are_only_pipe_ends(stage_masks){
-   if(stage_masks.length == 0)
+   if(stage_masks.length == 0){
       return false;
-   return stage_masks.every( (stageMask) => (stageMask == "TOP_OF_PIPE_BIT") || (stageMask == "BOTTOM_OF_PIPE_BIT"));
+   }
+   return stage_masks.every( (stage_mask) => is_stage_mask_pipe_end(stage_mask));
 }
 
 
@@ -291,7 +304,6 @@ function does_table_do_memory_acc_w_pipe_ends(table_id){
 
 
 function get_error_txt(){
-   
    if(get_select_text('#srcSubpass') == "VK_SUBPASS_EXTERNAL" && get_select_text('#dstSubpass') == "VK_SUBPASS_EXTERNAL"){
       return ["<code>srcSubpass</code> and <code>dstSubpass</code> must not both be equal to <code>VK_SUBPASS_EXTERNAL</code>."];
    }
@@ -325,8 +337,9 @@ function is_dep_on_read(){
    let source_table = document.querySelector("#src_scope");
    let source_access_scope = get_table_access_scope(source_table);
    for (let i = 0; i < source_access_scope.length; i++) {
-      if(source_access_scope[i].includes("_READ_BIT"))
+      if(source_access_scope[i].includes("_READ_BIT")){
          return true;
+      }
    }
    return false;
 }
@@ -343,29 +356,26 @@ function check_and_display_info(){
    
    var error_txt = get_error_txt();
    if(error_txt.length > 0){
-      let error_el = create("p", error_txt[0], "error");
-      result_el.appendChild(error_el);
-      
-      if(error_txt.length > 1){
-         for (let i = 1; i < error_txt.length; i++) {
-            result_el.appendChild(error_txt[i]);
-         }
-      }
+      result_el.appendChild(create("p", error_txt[0], ["error"]));
       return;
    }
    
    // "Creates dependency between A and B"
    result_el.appendChild(create("span", "Creates a dependency between"));
    let ul = document.createElement('ul')
-   if (get_select_text('#srcSubpass') === "VK_SUBPASS_EXTERNAL")
+   if (get_select_text('#srcSubpass') === "VK_SUBPASS_EXTERNAL"){
       ul.appendChild(create("li", "Commands that occur earlier in submission order than the <code>vkCmdBeginRenderPass</code> used to begin the render pass instance and"));
-   else
+   }
+   else{
       ul.appendChild(create("li", "Subpass " + get_select_text("#srcSubpass") +" and"));
+   }
    
-   if (get_select_text('#dstSubpass') === "VK_SUBPASS_EXTERNAL")
-   ul.appendChild(create("li", "Commands that occur later in submission order than the  <code>vkCmdEndRenderPass</code> used to end the render pass instance."));
-   else
-   ul.appendChild(create("li", "Subpass " + get_select_text("#dstSubpass")));
+   if (get_select_text('#dstSubpass') === "VK_SUBPASS_EXTERNAL"){
+      ul.appendChild(create("li", "Commands that occur later in submission order than the  <code>vkCmdEndRenderPass</code> used to end the render pass instance."));
+   }
+   else{
+      ul.appendChild(create("li", "Subpass " + get_select_text("#dstSubpass")));
+   }
    result_el.appendChild(ul);
    
    // srcSubpass == dstSubpass
@@ -401,20 +411,20 @@ function check_and_display_info(){
    // }
    
    if(!is_exec_dependency){
-   //    let source_scope = "<code>" + get_select_text('#srcStageMask') + " × " + get_select_text('#srcAccessMask') + "</code>";
-   //    if(get_select_text('#srcAccessMask') == "0")
-   //    source_scope = "Actually nothing because <code>srcAccessMask=0</code>";
+      //    let source_scope = "<code>" + get_select_text('#srcStageMask') + " × " + get_select_text('#srcAccessMask') + "</code>";
+      //    if(get_select_text('#srcAccessMask') == "0")
+      //    source_scope = "Actually nothing because <code>srcAccessMask=0</code>";
       
-   //    let destination_scope = "<code>" + get_select_text('#dstStageMask') + " × " + get_select_text('#dstAccessMask') + "</code>";
-   //    if(get_select_text('#dstAccessMask') == "0")
-   //    destination_scope = "Actually nothing because <code>dstAccessMask=0</code>";
+      //    let destination_scope = "<code>" + get_select_text('#dstStageMask') + " × " + get_select_text('#dstAccessMask') + "</code>";
+      //    if(get_select_text('#dstAccessMask') == "0")
+      //    destination_scope = "Actually nothing because <code>dstAccessMask=0</code>";
       
-   //    result_el.appendChild(create("p", "This creates a memory dependency that will make everything in the source scope available, and everything available (including layout transitions because \"writes performed by a layout transition are automatically made available\") visible in the destination scope."));
+      //    result_el.appendChild(create("p", "This creates a memory dependency that will make everything in the source scope available, and everything available (including layout transitions because \"writes performed by a layout transition are automatically made available\") visible in the destination scope."));
       
-   //    ul = document.createElement('ul')
-   //    ul.appendChild(create("li", "Source Scope: " + source_scope));
-   //    ul.appendChild(create("li", "Destination Scope: " + destination_scope));
-   //    result_el.appendChild(ul);
+      //    ul = document.createElement('ul')
+      //    ul.appendChild(create("li", "Source Scope: " + source_scope));
+      //    ul.appendChild(create("li", "Destination Scope: " + destination_scope));
+      //    result_el.appendChild(ul);
       
       
       if(is_dep_on_read()){
@@ -435,9 +445,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
    let default_srcAccessMasks = [];
    let default_dstStageMask = ["ALL_COMMANDS_BIT"];
    let default_dstAccessMask = ["INPUT_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_WRITE_BIT", "DEPTH_STENCIL_ATTACHMENT_READ_BIT", "DEPTH_STENCIL_ATTACHMENT_WRITE_BIT"];
-
+   
    document.querySelector("#tab_src").appendChild(build_table("src_scope", default_srcStageMasks, default_srcAccessMasks));
    document.querySelector("#tab_dst").appendChild(build_table("dst_scope", default_dstStageMask, default_dstAccessMask));
-
+   
    scope_checkbox_clicked();
 });
