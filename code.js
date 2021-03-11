@@ -53,52 +53,48 @@ function build_labeled_checkbox(name, initial_checked){
 }
 
 function get_ij_stage_and_access(i, j){
-   if(i > stage_list.length)
-      console.log("i too big");
-   if(i > access_list.length)
-      console.log("j too big");
    return [stage_list[i], access_list[j]];
 }
 
 function build_table(id_str, default_stages, default_accesses){
-   let tbody = document.createElement("tbody");
+   let table = create("div", "", "table");
+   table.id = id_str;
    
    // Access bits
    {
-      let tr = document.createElement("tr");
-      tr.appendChild(create("th", ""));
+      let first_row = create("div", "", "table_row")
+      first_row.appendChild(create("div", ""));
       access_list.forEach(access => {
-         let th = create("th", "", "col_header");
+         let access_el = create("div", "", "rot");
          let checked = default_accesses.includes(access);
          let labeled_box = build_labeled_checkbox(access, checked);
-         th.appendChild(labeled_box[0]);
-         th.appendChild(labeled_box[1]);
-         tr.appendChild(th);
-      });
-      // let thead = create("thread", "");
-      // thead.appendChild(tr);
-      // tbody.appendChild(thead);
+         access_el.appendChild(labeled_box[0]);
+         access_el.appendChild(labeled_box[1]);
 
-      tbody.appendChild(tr);
+         first_row.appendChild(access_el);
+      });
+
+      table.appendChild(first_row);
    }
 
+   
    // Stage bits
    {
       stage_list.forEach(stage => {
-         let tr = document.createElement("tr");
+         let row = create("div", "", "table_row")
          {
-            let th = create("th", "", "row_header");
+            let stage_el = create("div", "");
             let checked = default_stages.includes(stage);
             let labeled_box = build_labeled_checkbox(stage, checked);
-            th.appendChild(labeled_box[0]);
-            th.appendChild(labeled_box[1]);
-            tr.appendChild(th);
+            stage_el.appendChild(labeled_box[0]);
+            stage_el.appendChild(labeled_box[1]);
+            row.appendChild(stage_el);
          }
          access_list.forEach(access => {
-            tr.appendChild(create("td", " "));
+            row.appendChild(create("div", " ", "table_cell"));
          });
          
-         tbody.appendChild(tr);
+         table.appendChild(row);
       });
    }
 
@@ -108,23 +104,21 @@ function build_table(id_str, default_stages, default_accesses){
          let stage_and_access = get_ij_stage_and_access(i_stage, j_access);
          let is_t4 = table4(stage_and_access[1], stage_and_access[0]);
          if(is_t4){
-            tbody.children[i_stage+1].children[j_access+1].classList.add("green");
+            table.children[i_stage+1].children[j_access+1].classList.add("green");
          }
       }
    }
    
    
-   let table = document.createElement("table");
-   table.id = id_str;
-   table.appendChild(tbody);
+   
+   // table.appendChild(tbody);
    return table;
 }
 
 function get_table_stage_scope(table){
    stage_scope = [];
-   let tbody = table.children[0];
    for (let i = 0; i < stage_list.length; i++) {
-      let input_el = tbody.children[i+1].children[0].children[0];
+      let input_el = table.children[i+1].children[0].children[0];
       if(input_el.checked){
          stage_scope.push(input_el.id);
       }
@@ -134,9 +128,9 @@ function get_table_stage_scope(table){
 
 function get_table_access_scope(table){
    access_scope = [];
-   let tr = table.children[0].children[0];
+   let row = table.children[0];
    for (let i = 0; i < stage_list.length; i++) {
-      let input_el = tr.children[i+1].children[0];
+      let input_el = row.children[i+1].children[0];
       if(input_el.checked){
          access_scope.push(input_el.id);
       }

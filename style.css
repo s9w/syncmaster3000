@@ -51,34 +51,35 @@ input[type=checkbox]:checked + label{
 }
 
 /* table things */
-/* thread > tr >th{
-   background-color: red;
-   transform: rotate(-90deg);
-   transform-origin: left;
-} */
-table>tbody>*:first-child{
-   /* background-color: red; */
-   writing-mode: sideways-lr;
-   vertical-align: bottom;
-}
-.col_header{
-   width: 1.5em;
+.table{
+   display: flex;
+   flex-direction: column;
+   margin-top: 20em;
    font-family: "Bahnschrift";
 }
-.col_header>*{
-   vertical-align: middle;
+.table_row{
+   display: flex;
+   flex-direction: row;
+   margin-top: 2px;
 }
-.row_header{
-   text-align: left;
-   font-family: "Bahnschrift";
-}
-th{
-   font-weight: normal;
-}
-td{
+.table_cell{
    background-color: hsl(0, 100%, 96%);;
+   width: 1.5em;
+   margin-left: 2px;
 }
-td.green{
+.rot{
+   display: inline-flex;
+   transform: rotate( -90deg );
+   width: 1.5em;
+   margin-left: 2px;
+}
+.table_row>div:first-child{
+   min-width: 22em;
+   width: 22em;
+   display: flex;
+}
+
+.table_cell.green{
    background-color: hsl(111, 100%, 96%);;
 }
 
