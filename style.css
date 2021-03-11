@@ -73,6 +73,7 @@ input[type=checkbox]:checked + label{
    background-color: hsl(0, 100%, 96%);;
    width: 1.5em;
    margin-left: 2px;
+   flex-shrink: 0;
 }
 .rot{
    display: inline-flex;
