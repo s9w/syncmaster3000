@@ -17,7 +17,7 @@ blockquote{
 }
 #tab_bar{
    background-color: lightyellow;
-   padding: 0.5em;
+   display: flex;
 }
 .link_underlining{
    text-decoration-style: dashed;
