@@ -23,9 +23,10 @@
       </header>
       
       <div id="tab_bar">
-         <span data-tabid="#tab_main" class="link_underlining button active_button" onclick="section_button_clicked(this)">main</span>
-         <span data-tabid="#tab_src" class="link_underlining button" onclick="section_button_clicked(this)">Source scope</span>
-         <span data-tabid="#tab_dst" class="link_underlining button" onclick="section_button_clicked(this)">Destination scope</span>
+         <div data-tabid="#tab_main" class="link_underlining button active_button" onclick="section_button_clicked(this)">Main</div>
+         <div data-tabid="#tab_src" class="link_underlining button" onclick="section_button_clicked(this)">Source scope</div>
+         <div data-tabid="#tab_dst" class="link_underlining button" onclick="section_button_clicked(this)">Destination scope</div>
+         <div data-tabid="#tab_setup" class="link_underlining button" onclick="section_button_clicked(this)">Setup</div>
       </div> 
       
       <section id="tab_main">
@@ -82,5 +83,20 @@
          </section>
          <section id="tab_src" class="invisible"></section>
          <section id="tab_dst" class="invisible"></section>
+         <section id="tab_setup" class="invisible">
+            <p>Set the graphics pipeline this is about. This refers to your <code>VkSubpassDescription.pipelineBindPoint</code>.</p>
+            <label for="pipeline-select">Pipeline</label>
+
+            <select id="pipeline-select">
+               <option selected value="graphics_primitive">Graphics primitive pipeline</option>
+               <option value="graphics_mesh">Graphics mesh pipeline</option>
+               <option value="raytracing">Ray tracing</option>
+            </select>
+
+            <p>That pipeline goes through the following stages:</p>
+            <div id="pipeline_stages">
+
+            </div>
+         </section>
          
       </body>

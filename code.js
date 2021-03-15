@@ -2,12 +2,16 @@ let stage_list = ["TOP_OF_PIPE_BIT", "DRAW_INDIRECT_BIT", "VERTEX_INPUT_BIT", "V
 
 let access_list = ["INDIRECT_COMMAND_READ_BIT", "INDEX_READ_BIT", "VERTEX_ATTRIBUTE_READ_BIT", "UNIFORM_READ_BIT", "INPUT_ATTACHMENT_READ_BIT", "SHADER_READ_BIT", "SHADER_WRITE_BIT", "COLOR_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_WRITE_BIT", "DEPTH_STENCIL_ATTACHMENT_READ_BIT", "DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", "TRANSFER_READ_BIT", "TRANSFER_WRITE_BIT", "HOST_READ_BIT", "HOST_WRITE_BIT", "MEMORY_READ_BIT", "MEMORY_WRITE_BIT"];
 
+let pipelines_stages = {};
+pipelines_stages["graphics_primitive"] = ["DRAW_INDIRECT_BIT", "VERTEX_INPUT_BIT ", "VERTEX_SHADER_BIT", "TESSELLATION_CONTROL_SHADER_BIT", "TESSELLATION_EVALUATION_SHADER_BIT", "GEOMETRY_SHADER_BIT", "TRANSFORM_FEEDBACK_BIT_EXT", "FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", "EARLY_FRAGMENT_TESTS_BIT", "FRAGMENT_SHADER_BIT", "LATE_FRAGMENT_TESTS_BIT", "COLOR_ATTACHMENT_OUTPUT_BIT"]
+pipelines_stages["graphics_mesh"] = ["DRAW_INDIRECT_BIT", "TASK_SHADER_BIT_NV", "MESH_SHADER_BIT_NV", "FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", "EARLY_FRAGMENT_TESTS_BIT", "FRAGMENT_SHADER_BIT", "LATE_FRAGMENT_TESTS_BIT", "COLOR_ATTACHMENT_OUTPUT_BIT"]
+pipelines_stages["raytracing"] = ["DRAW_INDIRECT_BIT", "RAY_TRACING_SHADER_BIT_KHR"]
+
 
 function create(type, content, class_list = []){
    var el = document.createElement(type);
    el.innerHTML = content;
-   for(let c of class_list)
-   el.classList.add(c);
+   el.classList.add(...class_list);
    return el;
 }
 
@@ -120,29 +124,36 @@ function build_table(id_str, default_stages, default_accesses){
 }
 
 function get_table_stage_scope(table){
-   stage_scope = [];
+   stage_flags = [];
    for (let i = 0; i < stage_list.length; i++) {
-      let cell_el = table.children[i+1].children[0];
-      let input_el = cell_el.querySelector("input");
+      const row_el = table.children[i+1];
+      let row_head_el = row_el.children[0];
+      let input_el = row_head_el.querySelector("input");
       if(input_el.checked){
-         stage_scope.push(input_el.id);
+         stage_flags.push(input_el.id);
       }
    }
-   return stage_scope;
+   return stage_flags;
 }
 
 
 function get_table_access_scope(table){
-   access_scope = [];
-   let row = table.children[0];
-   for (let i = 0; i < stage_list.length; i++) {
-      let cell_el = row.children[i+1];
-      let input_el = cell_el.querySelector("input");
+   access_flags = [];
+   let header_row_el = table.children[0];
+   for (let i = 0; i < access_list.length; i++) {
+      let column_head_el = header_row_el.children[i+1];
+      let input_el = column_head_el.querySelector("input");
       if(input_el.checked){
-         access_scope.push(input_el.id);
+         access_flags.push(input_el.id);
       }
    }
-   return access_scope;
+   return access_flags;
+}
+
+
+function get_stages_and_accesses(id){
+   const source_table = document.querySelector(id);
+   return [get_table_stage_scope(source_table), get_table_access_scope(source_table)];
 }
 
 
@@ -165,16 +176,11 @@ function write_pretty_bitmask(scope_str_array, prefix, target_div){
 }
 
 function scope_checkbox_clicked(){
-   let source_table = document.querySelector("#src_scope");
-   let source_stage_scope = get_table_stage_scope(source_table);
-   let source_access_scope = get_table_access_scope(source_table);
+   let [src_stage_scope, src_access_scope] = get_stages_and_accesses("#src_scope");
+   let [dst_stage_scope, dst_access_scope] = get_stages_and_accesses("#dst_scope");
    
-   let dst_table = document.querySelector("#dst_scope");
-   let dst_stage_scope = get_table_stage_scope(dst_table);
-   let dst_access_scope = get_table_access_scope(dst_table);
-   
-   write_pretty_bitmask(source_stage_scope, "VK_PIPELINE_STAGE_", document.querySelector("#srcStageMask"));
-   write_pretty_bitmask(source_access_scope, "VK_ACCESS_", document.querySelector("#srcAccessMask"));
+   write_pretty_bitmask(src_stage_scope, "VK_PIPELINE_STAGE_", document.querySelector("#srcStageMask"));
+   write_pretty_bitmask(src_access_scope, "VK_ACCESS_", document.querySelector("#srcAccessMask"));
    
    write_pretty_bitmask(dst_stage_scope, "VK_PIPELINE_STAGE_", document.querySelector("#dstStageMask"));
    write_pretty_bitmask(dst_access_scope, "VK_ACCESS_", document.querySelector("#dstAccessMask"));
@@ -261,19 +267,12 @@ function table4(access, stage){
 }
 
 
-function is_table_valid(table_id){
-   let table_el = document.querySelector(table_id);
-   let stage_masks = get_table_stage_scope(table_el);
-   let access_masks = get_table_access_scope(table_el);
-   for (let i = 0; i < access_masks.length; i++) {
-      let are_all_supported = stage_masks.some( (srcStageMask) => table4(access_masks[i], srcStageMask) );
-      if(!are_all_supported){
-         return false;
-      }
-   }
-   return true;
-}
+function is_scope_valid(table_id){
+   const [pipeline_stages, access_flags] = get_stages_and_accesses(table_id);
 
+   const is_access_supported = (access_flag) => pipeline_stages.some( (stage) => table4(access_flag, stage));
+   return access_flags.every((access_flag) => is_access_supported(access_flag));
+}
 
 function is_stage_mask_pipe_end(stage_mask){
    return ["TOP_OF_PIPE_BIT", "BOTTOM_OF_PIPE_BIT"].includes(stage_mask);
@@ -319,14 +318,14 @@ function get_error_txt(){
    
    // Is table 4 fulfilled?
    {
-      const make_error = function(stageMask){
+      const make_table4_error = function(stageMask){
          return [`Any access flag included in <code>srcAccessMask</code> must be supported by one of the pipeline stages in <code>${stageMask}</code>, as specified in <a href=\"https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization-access-types-supported\">table of supported access types</a>`];
       }
-      if(!is_table_valid("#src_scope")){
-         return make_error("srcStageMask");
+      if(!is_scope_valid("#src_scope")){
+         return make_table4_error("srcStageMask");
       }
-      if(!is_table_valid("#dst_scope")){
-         return make_error("dstStageMask");
+      if(!is_scope_valid("#dst_scope")){
+         return make_table4_error("dstStageMask");
       }
    }
    
@@ -349,12 +348,7 @@ function get_error_txt(){
 function is_dep_on_read(){
    let source_table = document.querySelector("#src_scope");
    let source_access_scope = get_table_access_scope(source_table);
-   for (let i = 0; i < source_access_scope.length; i++) {
-      if(source_access_scope[i].includes("_READ_BIT")){
-         return true;
-      }
-   }
-   return false;
+   return source_access_scope.some( (access_mask) => access_mask.includes("_READ_BIT") );
 }
 
 
@@ -446,21 +440,56 @@ function check_and_display_info(){
    }
 }
 
-// function example_
 
+function pipeline_change(){
+   let element = document.querySelector("#pipeline-select");
+   let pipeline_name = element.options[element.selectedIndex].value;
+
+   let pipeline_container = document.querySelector("#pipeline_stages");
+   pipeline_container.innerHTML = "";
+
+   for (let i = 0; i < pipelines_stages[pipeline_name].length; i++) {
+      if(i != 0){
+         pipeline_container.appendChild(create("div", "↓", ["noselect"]));
+      }
+      const stage = pipelines_stages[pipeline_name][i];
+      pipeline_container.appendChild(create("div", stage));
+   }
+}
+
+
+let dependency_presets = {};
+function add_preset(name, src_stage, src_access, dst_stage, dst_access){
+   dependency_presets[name] = {
+      "src_stage": src_stage,
+      "src_access": src_access,
+      "dst_stage": dst_stage,
+      "dst_access": dst_access
+   };
+}
+
+
+function apply_preset(preset){
+   document.querySelector("#tab_src").appendChild(build_table("src_scope", preset["src_stage"], preset["src_access"]));
+   document.querySelector("#tab_dst").appendChild(build_table("dst_scope", preset["dst_stage"], preset["dst_access"]));
+}
 
 document.addEventListener("DOMContentLoaded", function(event) {
    document.querySelector('#srcSubpass').addEventListener("change", check_and_display_info);
    document.querySelector('#dstSubpass').addEventListener("change", check_and_display_info);
+   document.querySelector('#pipeline-select').addEventListener("change", pipeline_change);
+
+   add_preset(
+      "first_implicit",
+      ["TOP_OF_PIPE_BIT"],
+      [],
+      ["ALL_COMMANDS_BIT"],
+      ["INPUT_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_WRITE_BIT", "DEPTH_STENCIL_ATTACHMENT_READ_BIT", "DEPTH_STENCIL_ATTACHMENT_WRITE_BIT"]
+   );
+   console.log(dependency_presets);
    
-   // Default source and destination scopes from the spec
-   let default_srcStageMasks = ["TOP_OF_PIPE_BIT"];
-   let default_srcAccessMasks = [];
-   let default_dstStageMask = ["ALL_COMMANDS_BIT"];
-   let default_dstAccessMask = ["INPUT_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_READ_BIT", "COLOR_ATTACHMENT_WRITE_BIT", "DEPTH_STENCIL_ATTACHMENT_READ_BIT", "DEPTH_STENCIL_ATTACHMENT_WRITE_BIT"];
-   
-   document.querySelector("#tab_src").appendChild(build_table("src_scope", default_srcStageMasks, default_srcAccessMasks));
-   document.querySelector("#tab_dst").appendChild(build_table("dst_scope", default_dstStageMask, default_dstAccessMask));
-   
+   apply_preset(dependency_presets["first_implicit"]);
+
    scope_checkbox_clicked();
+   pipeline_change();
 });

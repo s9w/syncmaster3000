@@ -52,10 +52,20 @@ blockquote{
    width: 13em;
    white-space: pre;
 }
+.noselect{
+   user-select: none;
+}
 
 /* This is some css voodoo I don't understand but it apparently is necessary to select the label. label:checked alone doesn't work */
 input[type=checkbox]:checked + label{
    background-color: lightgreen;
+}
+
+#pipeline_stages{
+   width: 30em;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
 }
 
 /* table things */
